@@ -190,7 +190,7 @@ async def order(request: Request):
 
 @app.post('/sub')
 def hello(request: Request):
-    print(request.json)
+    print(request.json())
     return "Hello World!"
 
 @app.post("/webhooks/line")
