@@ -1,3 +1,5 @@
+import base64
+import json
 import logging
 import os
 import sys
@@ -19,11 +21,12 @@ from linebot.v3.messaging import (
     ReplyMessageRequest,
     PushMessageRequest,
     TextMessage,
-    ImageMessage
+    FlexMessage
 )
 from linebot.v3.exceptions import (
     InvalidSignatureError
 )
+from linebot.v3.messaging import FlexContainer
 from linebot.v3.webhooks import (
     MessageEvent,
     TextMessageContent,
@@ -174,24 +177,35 @@ def order_flex(
     }
 
 
-@app.post("/order/consume")
-async def order(request: Request):
-    order_json = order_flex(
-        title="Brown Coffee",
-        place="JCConf",
-        time="10:00~11:00",
-        website="https://jcconf.tw/2023/"
-    )
-    line_bot_api.push_message(
-        'LINE User ID',
-        FlexSendMessage(alt_text="訂餐資訊", contents=order_json)
-    )
 
 
 @app.post('/sub')
-def hello(request: Request):
-    print(request.body())
-    return "Hello World!"
+async def publisher(request: Request):
+    # pub: {"order_id": 22, "name":"居西批全家優惠碼"}
+    body = await request.body()
+    body = json.loads(body.decode())
+    logger.info(f"Publisher original data is: {str(body)}")
+    data = body.get('message').get('data')
+    logger.info(f"Publisher content data is: {str(data)}")
+    if data is None:
+        return None
+    else:
+        data = json.loads(base64.b64decode(data))
+        logger.info(f"Publisher data format struct: {str(data)}")
+    
+    if data.get('order_id') != None:
+        order_json = order_flex(
+            title=data.get('name'),
+            place="JCConf",
+            time="10:00~11:00",
+            website="https://jcconf.tw/2023/"
+        )
+        message = FlexMessage(alt_text="hello", contents=FlexContainer.from_dict(order_json))
+        await line_bot_api.push_message(push_message_request=PushMessageRequest(
+                to=os.getenv('LINE_GROUP_ID'),
+                messages=[message],
+            ))
+
 
 @app.post("/webhooks/line")
 async def handle_callback(request: Request):
@@ -200,7 +214,6 @@ async def handle_callback(request: Request):
     # get request body as text
     body = await request.body()
     body = body.decode()
-
     try:
         events = parser.parse(body, signature)
     except InvalidSignatureError:
