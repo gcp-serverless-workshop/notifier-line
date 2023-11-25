@@ -37,7 +37,7 @@
       "postcreate": {
           "commands": [
               "echo '========================'",
-              "curl -X GET -H 'Authorization: Bearer $(gcloud auth print-access-token)' https://us-central1-run.googleapis.com/apis/serving.knative.dev/v1/namespaces/your-project/services/your-service| grep url"
+              "gcloud run services describe ${NAME} --platform=managed --region=${REGION} --project=${PROJECT} --format='value(status.address.url)'"
           ]
       }
   }
