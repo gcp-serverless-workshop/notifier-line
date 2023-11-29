@@ -226,11 +226,11 @@ async def handle_callback(request: Request):
         if not isinstance(event.message, TextMessageContent):
             continue
         text = event.message.text
-
+        source = event.source
         await line_bot_api.reply_message(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
-                messages=[TextMessage(text=text)]
+                messages=[TextMessage(text=str(source))]
             ))
     return 'OK'
 
