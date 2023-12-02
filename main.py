@@ -12,6 +12,7 @@ if os.getenv('API_ENV') != 'production':
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from lotify.client import Client
 
 from linebot.v3.webhook import WebhookParser
 from linebot.v3.messaging import (
@@ -19,14 +20,11 @@ from linebot.v3.messaging import (
     AsyncMessagingApi,
     Configuration,
     ReplyMessageRequest,
-    PushMessageRequest,
     TextMessage,
-    FlexMessage
 )
 from linebot.v3.exceptions import (
     InvalidSignatureError
 )
-from linebot.v3.messaging import FlexContainer
 from linebot.v3.webhooks import (
     MessageEvent,
     TextMessageContent,
@@ -47,6 +45,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+client = Client()
 
 channel_secret = os.getenv('LINE_CHANNEL_SECRET', None)
 channel_access_token = os.getenv('LINE_CHANNEL_ACCESS_TOKEN', None)
@@ -177,8 +178,6 @@ def order_flex(
     }
 
 
-
-
 @app.post('/sub')
 async def publisher(request: Request):
     # pub: {"order_id": 22, "name":"居西批全家優惠碼"}
@@ -192,19 +191,12 @@ async def publisher(request: Request):
     else:
         data = json.loads(base64.b64decode(data))
         logger.info(f"Publisher data format struct: {str(data)}")
-    
+
     if data.get('order_id') != None:
-        order_json = order_flex(
-            title=data.get('name'),
-            place="JCConf",
-            time="10:00~11:00",
-            website="https://jcconf.tw/2023/"
-        )
-        message = FlexMessage(alt_text="hello", contents=FlexContainer.from_dict(order_json))
-        await line_bot_api.push_message(push_message_request=PushMessageRequest(
-                to=os.getenv('LINE_GROUP_ID'),
-                messages=[message],
-            ))
+        response = client.send_message(
+            access_token=os.environ.get('LOTIFY_ACCESS_TOKEN', 'xxx'),
+            message=f"\n[NAME]\n訂單編號: {data.get('order_id')}\n訂單內容: {data.get('name')}")
+        print(response)
 
 
 @app.post("/webhooks/line")
