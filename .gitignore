@@ -25,4 +25,3 @@ firebase.json
 .pytest_cache
 venv
 serviceAccountKey.json
-sub.py
