@@ -1,14 +1,9 @@
 {
   "name": "notifier-line",
   "env": {
-    "LINE_CHANNEL_SECRET": {
-      "description": "LINE Bot secret key",
+    "LOTIFY_ACCESS_TOKEN": {
+      "description": "LINE Notify secret key",
       "value": "ooooooo",
-      "required": true
-    },
-    "LINE_CHANNEL_ACCESS_TOKEN": {
-      "description": "LINE Bot access key",
-      "value": "xxxxxxxx",
       "required": true
     },
     "API_ENV": {
@@ -22,10 +17,6 @@
     "GOOGLE_CLOUD_PROJECT": {
       "description": "Google cloud project name",
       "value": "xxxx"
-    },
-    "LINE_GROUP_ID": {
-      "description": "LINE Group id for testing",
-      "value": "abc123456"
     }
   },
   "options": {
