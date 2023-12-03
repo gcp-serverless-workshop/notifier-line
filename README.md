@@ -69,6 +69,22 @@ gcloud run deploy notifier-line-1 --source .
 
 > 佈署參考: [【GCP】將 FastAPI 佈署上 Cloud Run](https://nijialin.com/2023/03/19/gcp-why-need-cloudrun-as-serverless/#5-%E4%BD%88%E7%BD%B2%E5%88%B0-Google-Cloud-Run)
 
+## 問題
+
+### Cloud Shell 中遇到 unauthorized: You don't have the needed permissions to perform this operation, and you may have invalid credentials.
+
+參考 [stack overflow 解答](https://stackoverflow.com/questions/55446787/permission-issues-while-docker-push)，請先使用以下指令協助開啟權限
+
+```
+gcloud auth configure-docker # Y
+```
+
+透過 `rm` 刪除資料夾之後，再重新跑一次以下指令佈署
+
+```
+cloudshell_open --repo_url "https://github.com/gcp-serverless-workshop/notifier-line.git" --page "shell" --force_new_clone
+```
+
 ## 參與貢獻
 
 如果你有任何問題或建議，歡迎開 issue 或 pull request。
