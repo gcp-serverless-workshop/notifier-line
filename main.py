@@ -51,7 +51,7 @@ async def publisher(request: Request):
     if data.get('order_id') != None:
         response = client.send_message(
             access_token=os.environ.get('LOTIFY_ACCESS_TOKEN', 'xxx'),
-            message=f"\n[NAME]\n訂單編號: {data.get('order_id')}\n訂單內容: {data.get('name')}")
+            message=f"\n[忍者便利商店]\n訂單編號: {data.get('order_id')}\n訂單內容: {data.get('name')}")
         print(response)
 
 
