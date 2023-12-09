@@ -1,6 +1,6 @@
 # LINE Notifier
 
-讓訂單可以透過通知打到 LINE 上面
+讓訂單系統可以透過 Google Pub/Sub 打到 LINE Notify，同步傳到群組或個人通知當中
 
 ## 安裝與執行
 
